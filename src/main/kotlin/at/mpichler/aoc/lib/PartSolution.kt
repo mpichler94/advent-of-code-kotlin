@@ -21,7 +21,7 @@ enum class Part(val value: Int) {
  * @property result The expected result for the input.
  * @property name Custom name shown in logs
  */
-data class Test (val input: String, val result: String, val name: String)
+data class Test (val input: String, val result: Any, val name: String)
 
 /**
  * Implements the solution for a part of a puzzle.
@@ -51,7 +51,7 @@ abstract class PartSolution {
      * This function computes the solution for the puzzle.
      * @return Puzzle solution as string without padding or newlines.
      */
-    abstract fun compute(): String
+    abstract fun compute(): Any
 
     /**
      * Return custom tests that are executed additionally to the example to test
@@ -77,7 +77,7 @@ abstract class PartSolution {
     /**
      * Return the expected result for the example input.
      */
-    abstract fun getExampleAnswer(): String
+    abstract fun getExampleAnswer(): Any
 
     internal fun run(puzzle: Puzzle, part: Part) {
         val testsOk = runTests(puzzle)
@@ -108,7 +108,7 @@ abstract class PartSolution {
 
         val (result, elapsed3) = measureTimedValue { compute() }
         logger.info { "Compute $elapsed3" }
-        return result
+        return result.toString()
     }
 
     private fun test(exampleInput: String): Boolean {
@@ -117,7 +117,7 @@ abstract class PartSolution {
         val startTime = System.currentTimeMillis()
 
         val tests = buildList {
-            add(Test(exampleInput, getExampleAnswer(), "Example"))
+            add(Test(exampleInput, getExampleAnswer().toString(), "Example"))
             addAll(tests())
         }
 
@@ -133,7 +133,7 @@ abstract class PartSolution {
 
     private fun executeTest(test: Test): Boolean {
         val result = testSolve(test.input)
-        return if (result == test.result) {
+        return if (result == test.result.toString()) {
             logger.info { "Test ${test.name} $GREEN OK $DEFAULT Result: $result" }
             true
         } else {
@@ -156,6 +156,6 @@ abstract class PartSolution {
 
         val (result, elapsed3) = measureTimedValue { compute() }
         logger.info { "Compute $elapsed3" }
-        return result
+        return result.toString()
     }
 }

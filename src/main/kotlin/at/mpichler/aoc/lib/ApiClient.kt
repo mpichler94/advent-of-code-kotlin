@@ -72,7 +72,7 @@ internal class ApiClient (private val session: String, private val year: Int, pr
     fun getExample(): String {
         val document = getPuzzlePage()
 
-        return document.selectFirst("pre")?.text() ?: ""
+        return document.selectFirst("pre")?.wholeText() ?: ""
     }
 
     fun getInput(): String {
