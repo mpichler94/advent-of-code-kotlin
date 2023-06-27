@@ -28,9 +28,9 @@ open class Part3A : PartSolution() {
 
     internal fun convertToNum(char: Char): Int {
         if (char.isUpperCase()) {
-            return char.code - 65 + 27
+            return char - 'A' + 27
         }
-        return char.code - 97 + 1
+        return char - 'a' + 1
     }
 
     override fun getExampleAnswer(): Int {

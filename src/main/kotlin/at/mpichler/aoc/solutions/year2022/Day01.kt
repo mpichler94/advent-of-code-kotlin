@@ -4,11 +4,9 @@ import at.mpichler.aoc.lib.Day
 import at.mpichler.aoc.lib.PartSolution
 
 open class Part1A: PartSolution() {
-
     internal lateinit var sums: List<Int>
 
     override fun parseInput(text: String){
-
         sums = text.trim()
             .split("\n\n")
             .map { it.split("\n").sumOf { it.toInt() } }

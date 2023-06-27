@@ -5,7 +5,7 @@ import at.mpichler.aoc.lib.PartSolution
 
 open class Part2A : PartSolution() {
     private lateinit var rounds: List<String>
-    internal open var table = mapOf(
+    internal open val table = mapOf(
         "AX" to 4,
         "AY" to 8,
         "AZ" to 3,
@@ -28,11 +28,10 @@ open class Part2A : PartSolution() {
     override fun getExampleAnswer(): Int {
         return 15
     }
-
 }
 
 class Part2B : Part2A() {
-    override var table = mapOf(
+    override val table = mapOf(
         "AX" to 3,
         "AY" to 4,
         "AZ" to 8,

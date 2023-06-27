@@ -3,26 +3,9 @@ package at.mpichler.aoc.solutions.year2022
 import at.mpichler.aoc.lib.Day
 import at.mpichler.aoc.lib.PartSolution
 
-internal data class Command(val count: Int, val src: Int, val dst: Int) {
-    fun execute(towers: List<MutableList<Char>>, moveMultipleAtOnce: Boolean = false) {
-        for (i in 0 until count) {
-            towers[dst].add(if (moveMultipleAtOnce) i else 0, towers[src].removeFirst())
-        }
-    }
-}
-
-internal fun Command(line: String): Command {
-    val match = Regex("move (\\d+) from (\\d+) to (\\d+)").find(line) ?: throw RuntimeException()
-
-    val cnt = match.groupValues[1].toInt()
-    val src = match.groupValues[2].toInt()
-    val dst = match.groupValues[3].toInt()
-
-    return Command(cnt, src - 1, dst - 1)
-}
 
 open class Part5A : PartSolution() {
-    internal lateinit var commands: List<Command>
+    protected lateinit var commands: List<Command>
     internal lateinit var towers: List<MutableList<Char>>
 
     override fun parseInput(text: String) {
@@ -38,6 +21,7 @@ open class Part5A : PartSolution() {
             if (line[1] == '1') {
                 continue
             }
+
             var i = 0
             while (i * 4 + 1 < line.length) {
                 val crate = line[i * 4 + 1]
@@ -53,7 +37,6 @@ open class Part5A : PartSolution() {
         return input.trim().split("\n").map(::Command).toList()
     }
 
-
     override fun compute(): String {
         commands.forEach { it.execute(towers) }
         return getMessage()
@@ -66,6 +49,25 @@ open class Part5A : PartSolution() {
 
     override fun getExampleAnswer(): String {
         return "CMZ"
+    }
+
+
+    protected data class Command(val count: Int, val src: Int, val dst: Int) {
+        fun execute(towers: List<MutableList<Char>>, moveMultipleAtOnce: Boolean = false) {
+            for (i in 0 until count) {
+                towers[dst].add(if (moveMultipleAtOnce) i else 0, towers[src].removeFirst())
+            }
+        }
+    }
+
+    private fun Command(line: String): Command {
+        val match = Regex("move (\\d+) from (\\d+) to (\\d+)").find(line) ?: throw RuntimeException()
+
+        val cnt = match.groupValues[1].toInt()
+        val src = match.groupValues[2].toInt()
+        val dst = match.groupValues[3].toInt()
+
+        return Command(cnt, src - 1, dst - 1)
     }
 }
 
