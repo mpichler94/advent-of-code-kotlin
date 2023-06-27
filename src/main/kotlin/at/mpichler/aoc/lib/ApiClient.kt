@@ -94,7 +94,11 @@ internal class ApiClient (private val session: String, private val year: Int, pr
         return data.body() ?: ""
     }
 
-    fun submit(answer: String, part: Part): String {
+    fun updateAnswers() {
+        getPuzzlePage()
+    }
+
+    fun submit(answer: String, part: Part): Result {
         logger.info { "Submitting answer ''$answer'' for $year day $day" }
 
         val partNum = if (part == Part.A) 1 else 2
@@ -112,26 +116,37 @@ internal class ApiClient (private val session: String, private val year: Int, pr
         val data = client.send(request, BodyHandlers.ofString())
         if (data.statusCode() < 200 || data.statusCode() >= 300) {
             logger.error { "Request for answer failed with code ${data.statusCode()}: ${data.headers()}" }
-            return ""
+            return Result.IO_ERROR
         }
 
         val document = Jsoup.parse(data.body())
-        val article = document.selectFirst("article") ?: return ""
+        val article = document.selectFirst("article") ?: return Result.IO_ERROR
 
         if (article.text().contains("That's the right answer")) {
             logger.info { "Answer is correct" }
+            return Result.OK
         } else if (article.text().contains("Did you already complete it")) {
             logger.info { "Already answered" }
+            return Result.ALREADY_ANSWERED
         } else if (article.text().contains("That's not the right answer")) {
             logger.error { "Answer is incorrect" }
+            return Result.INCORRECT
         } else if (article.text().contains("You gave an answer too recently")) {
             val waitTime = Regex("You have (?:(\\d+)m )?(\\d+)s left to wait").find(article.text())
             if (waitTime != null && waitTime.groups.isNotEmpty()) {
                 logger.error { "You gave an answer too recently. $waitTime" }
+                return Result.WAIT
             }
         }
 
-        return data.body() ?: ""
+        return Result.IO_ERROR
     }
 
+    internal enum class Result {
+        OK,
+        ALREADY_ANSWERED,
+        INCORRECT,
+        WAIT,
+        IO_ERROR
+    }
 }
