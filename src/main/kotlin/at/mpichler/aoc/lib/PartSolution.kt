@@ -11,6 +11,7 @@ import kotlin.time.measureTimedValue
 enum class Part(val value: Int) {
     /** The first part of the puzzle. */
     A(1),
+
     /** The second part of the puzzle. */
     B(2)
 }
@@ -21,7 +22,7 @@ enum class Part(val value: Int) {
  * @property result The expected result for the input.
  * @property name Custom name shown in logs
  */
-data class Test (val input: String, val result: Any, val name: String)
+data class Test(val input: String, val result: Any, val name: String)
 
 /**
  * Implements the solution for a part of a puzzle.
@@ -45,7 +46,8 @@ abstract class PartSolution {
     /**
      * Here you can do any configuration before the [compute] function is called.
      */
-    open fun config() { /* May be overridden to do configuration before compute */ }
+    open fun config() { /* May be overridden to do configuration before compute */
+    }
 
     /**
      * This function computes the solution for the puzzle.

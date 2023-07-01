@@ -63,7 +63,7 @@ internal object FileAccess {
         saveStringToFile("$CONFIG_DIR/${getFilePrefix(year, day)}${partName}_answer.txt", answer)
     }
 
-    fun getBadAnswers(year: Int, day: Int, part: Part) : List<String> {
+    fun getBadAnswers(year: Int, day: Int, part: Part): List<String> {
         val partName = if (part == Part.A) "a" else "b"
         val inputFile = File("$CONFIG_DIR/${getFilePrefix(year, day)}${partName}_bad_answers.txt")
         if (!inputFile.exists()) {

@@ -91,7 +91,7 @@ open class Part7A : PartSolution() {
 
     sealed class Command
 
-    data class Cd(val arg: String): Command() {
+    data class Cd(val arg: String) : Command() {
         fun apply(currentDir: File): File {
             val result = if (arg.endsWith("..")) {
                 currentDir.parent as File
@@ -102,11 +102,11 @@ open class Part7A : PartSolution() {
         }
     }
 
-    data class Ls(val output: List<String>): Command() {
+    data class Ls(val output: List<String>) : Command() {
         fun apply(dir: File) {
             for (line in output) {
                 if (line.startsWith("dir")) {
-                    dir.addFile(File(line.drop(4), parent=dir))
+                    dir.addFile(File(line.drop(4), parent = dir))
                 } else {
                     val parts = line.split(" ")
                     dir.addFile(File(parts[1], parts[0].toInt(), dir))

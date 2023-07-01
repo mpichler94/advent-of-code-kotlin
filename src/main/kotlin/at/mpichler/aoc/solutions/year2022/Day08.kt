@@ -2,13 +2,19 @@ package at.mpichler.aoc.solutions.year2022
 
 import at.mpichler.aoc.lib.Day
 import at.mpichler.aoc.lib.PartSolution
+import org.jetbrains.kotlinx.multik.api.mk
+import org.jetbrains.kotlinx.multik.api.zeros
+import org.jetbrains.kotlinx.multik.ndarray.data.*
+import org.jetbrains.kotlinx.multik.ndarray.operations.any
 import kotlin.math.max
 
 open class Part8A : PartSolution() {
     internal lateinit var wood: Wood
 
     override fun parseInput(text: String) {
-        val trees = text.trim().split("\n").map { it.toCharArray().map { it.digitToInt() } }
+        val lines = text.trim().split("\n")
+        val trees = mk.zeros<Int>(lines.size, lines[0].length)
+        lines.forEachIndexed { y, line -> line.forEachIndexed { x, c -> trees[y, x] = c.digitToInt() } }
         wood = Wood(trees)
     }
 
@@ -28,20 +34,22 @@ open class Part8A : PartSolution() {
         return 21
     }
 
-    data class Wood(val trees: List<List<Int>>) {
+    data class Wood(val trees: D2Array<Int>) {
         fun getWidth(): Int {
-            return trees.size
+            return trees.shape[1]
         }
 
         fun getHeight(): Int {
-            return trees[0].size
+            return trees.shape[0]
         }
 
-        private fun getRow(y: Int, start: Int = 0, end: Int = getWidth()): Iterable<Int> {
-            return trees[y].subList(start, end)
+        private fun getRow(y: Int, start: Int = 0, end: Int = getWidth()): MultiArray<Int, D1> {
+            return trees[y, start until end]
         }
-        private fun getCol(x: Int, start: Int = 0, end: Int = getHeight()): Iterable<Int> {
-            return (start until end).map { trees[it][x] }
+
+        private fun getCol(x: Int, start: Int = 0, end: Int = getHeight()): MultiArray<Int, D1> {
+            return trees[start until end, x]
+
         }
 
         fun isVisible(x: Int, y: Int): Boolean {
@@ -51,20 +59,16 @@ open class Part8A : PartSolution() {
 
             val tree = trees[y][x]
             var larger = 4
-            if (getRow(y, x + 1).any { it >= tree })
-            {
+            if (getRow(y, x + 1).any { it >= tree }) {
                 larger -= 1
             }
-            if (getRow(y, end = x).any {it >= tree })
-            {
+            if (getRow(y, end = x).any { it >= tree }) {
                 larger -= 1
             }
-            if (getCol(x, y + 1).any { it >= tree })
-            {
+            if (getCol(x, y + 1).any { it >= tree }) {
                 larger -= 1
             }
-            if (getCol(x, end = y).any { it >= tree })
-            {
+            if (getCol(x, end = y).any { it >= tree }) {
                 larger -= 1
             }
 

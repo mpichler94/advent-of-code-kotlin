@@ -15,7 +15,7 @@ open class Part2A : PartSolution() {
         "CX" to 7,
         "CY" to 2,
         "CZ" to 6
-        )
+    )
 
     override fun parseInput(text: String) {
         rounds = text.trim().split("\n").map { it.replace(" ", "") }.toList()

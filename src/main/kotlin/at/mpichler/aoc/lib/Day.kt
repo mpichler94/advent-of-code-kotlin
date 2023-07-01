@@ -19,7 +19,13 @@ import mu.KotlinLogging
  * @property partB Optional implementation of the solution for the second part
  * of the puzzle
  */
-class Day(private val year: Int, private val day: Int, private val partA: PartSolution, private val partB: PartSolution? = null, private val autoSubmit: Boolean = true) {
+class Day(
+    private val year: Int,
+    private val day: Int,
+    private val partA: PartSolution,
+    private val partB: PartSolution? = null,
+    private val autoSubmit: Boolean = true
+) {
 
     private val logger = KotlinLogging.logger {}
 

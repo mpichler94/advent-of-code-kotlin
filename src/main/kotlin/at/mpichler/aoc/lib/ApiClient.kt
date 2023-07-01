@@ -21,7 +21,7 @@ import java.time.Duration
  * @property year The year for the puzzle
  * @property day The day for the puzzle
  */
-internal class ApiClient (private val session: String, private val year: Int, private val day: Int) {
+internal class ApiClient(private val session: String, private val year: Int, private val day: Int) {
 
     private val logger = KotlinLogging.logger {}
 
