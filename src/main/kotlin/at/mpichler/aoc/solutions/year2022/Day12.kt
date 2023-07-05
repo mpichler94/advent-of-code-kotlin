@@ -1,24 +1,49 @@
 package at.mpichler.aoc.solutions.year2022
 
 import at.mpichler.aoc.lib.*
-import org.jetbrains.kotlinx.multik.api.d2array
 import org.jetbrains.kotlinx.multik.api.mk
 import org.jetbrains.kotlinx.multik.api.zeros
 import org.jetbrains.kotlinx.multik.ndarray.data.D2Array
-import org.jetbrains.kotlinx.multik.ndarray.data.get
 import org.jetbrains.kotlinx.multik.ndarray.data.set
 
 
 open class Part12A : PartSolution() {
-    lateinit var grid: D2Array<Int>
+    private lateinit var grid: D2Array<Int>
+    internal open val startChar = 'S'
+    private val endChar = 'E'
 
     override fun parseInput(text: String) {
         grid = createGrid(text.trim().split("\n"))
     }
 
     override fun compute(): Int {
-        val bfs = BFS('S', 'E', grid)
-        return bfs.calculate()
+        val starts = mutableListOf<Vector2i>()
+        var end = Vector2i(0, 0)
+        for (p in grid.multiIndices) {
+            val pos = Vector2i(p[1], p[0])
+            val char = grid[pos]
+            if (char == startChar.code) {
+                starts.add(pos)
+            } else if (char == endChar.code) {
+                end = pos
+            }
+        }
+
+        val traversal = BreadthFirst(this::nextEdges).startFrom(starts).goTo(end)
+        return traversal.depth - 1
+    }
+
+    private fun nextEdges(pos: Vector2i, traversal: BreadthFirst<*>): List<Vector2i> {
+        return grid.neighbors(pos).filter { height(grid[it]) <= height(grid[pos]) + 1 }.toList()
+    }
+
+    private fun height(code: Int): Int {
+        if (code == 'S'.code) {
+            return 'a'.code
+        } else if (code == 'E'.code) {
+            return 'z'.code
+        }
+        return code
     }
 
     override fun getExampleAnswer(): Int {
@@ -35,84 +60,10 @@ open class Part12A : PartSolution() {
 
         return values
     }
-
-    class BFS(private val start: Char, private val end: Char, private val grid: D2Array<Int>) {
-        fun calculate(): Int {
-            val endPos = getEndPos()
-
-            val depths = mk.d2array(grid.shape[0], grid.shape[1]) { Int.MAX_VALUE }
-            for (i in grid.multiIndices) {
-                val pos = Vector2i(i[1], i[0])
-                val char = grid[pos]
-                if (char != start.code) {
-                    continue
-                }
-
-                depths[pos] = 0
-                calculateSingle(pos, endPos, depths)
-            }
-
-            return depths[endPos]
-        }
-
-        private fun getEndPos(): Vector2i {
-            var endPos: Vector2i? = null
-            for (i in grid.multiIndices) {
-                val value = grid[i[0], i[1]]
-                if (value == end.code) {
-                    endPos = Vector2i(i[1], i[0])
-                    break
-                }
-            }
-
-            checkNotNull(endPos)
-            return endPos
-        }
-
-        private fun calculateSingle(start: Vector2i, end: Vector2i, depths: D2Array<Int>): D2Array<Int> {
-            val todo = mutableSetOf(start)
-
-            while (todo.isNotEmpty()) {
-                val pos = todo.first()
-                todo.remove(pos)
-                if (pos == end) {
-                    return depths
-                }
-
-                for (n in grid.neighbors(pos)) {
-                    if (height(grid[n]) > height(grid[pos]) + 1) {
-                        continue
-                    }
-
-                    val old = depths[n]
-                    if (old <= depths[pos]) {
-                        continue
-                    }
-
-                    depths[n] = depths[pos] + 1
-                    todo.add(n)
-                }
-            }
-
-            return depths
-        }
-
-        private fun height(code: Int): Int {
-            if (code == 'S'.code) {
-                return 'a'.code
-            } else if (code == 'E'.code) {
-                return 'z'.code
-            }
-            return code
-        }
-    }
 }
 
 class Part12B : Part12A() {
-    override fun compute(): Int {
-        val bfs = BFS('a', 'E', grid)
-        return bfs.calculate()
-    }
+    override val startChar: Char = 'a'
 
     override fun getExampleAnswer(): Int {
         return 29

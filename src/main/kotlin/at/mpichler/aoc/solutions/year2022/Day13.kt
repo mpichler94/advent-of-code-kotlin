@@ -70,6 +70,7 @@ open class Part13A : PartSolution() {
         return indexSum
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun checkOrder(left: Any, right: Any, i: Int, depth: Int = 0): Pair<Boolean, Boolean> {
         if (left is Int) {
             if (right is Int) {
