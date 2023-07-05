@@ -13,33 +13,40 @@ import java.util.PriorityQueue
  *
  * @param T Type of the nodes
  */
-abstract class Traversal<T>: Iterable<T> {
+abstract class Traversal<T> : Iterable<T> {
     private var starts = listOf<T>()
     private var end: T? = null
-    private var cameFrom = mapOf<T, T?>()
+    protected var cameFrom = mutableMapOf<T, T?>()
+        private set
     protected var finished = false
     protected var currentNode: T? = null
     val depth
-        get() = getPaths().minOf { it.size }
+        get() = getPaths().minOf { it.size } - 1
     val visited
         get() = cameFrom.keys
 
     fun startFrom(start: T): Traversal<T> {
         this.starts = listOf(start)
+
+        cameFrom = mutableMapOf()
         init(starts)
+
         return this
     }
 
     fun startFrom(start: List<T>): Traversal<T> {
         this.starts = start
+
+        cameFrom = mutableMapOf()
         init(starts)
+
         return this
     }
 
     fun goTo(end: T): Traversal<T> {
         check(starts.isNotEmpty())
 
-        cameFrom = traverse(end)
+        traverse(end)
         this.end = end
         return this
     }
@@ -61,12 +68,12 @@ abstract class Traversal<T>: Iterable<T> {
     }
 
     private fun getPath(start: T, end: T): List<T> {
-        var current: T? = end
+        var current: T = end
         val path = mutableListOf<T>()
 
-        while (current != start && current != null) {
+        while (current != start) {
             path.add(current)
-            current = cameFrom[current]
+            current = cameFrom[current] ?: break
         }
 
         path.add(start)
@@ -78,7 +85,7 @@ abstract class Traversal<T>: Iterable<T> {
         return PathIterator(this)
     }
 
-    private class PathIterator<T>(private val traversal: Traversal<T>): Iterator<T> {
+    private class PathIterator<T>(private val traversal: Traversal<T>) : Iterator<T> {
         override fun hasNext(): Boolean {
             return !traversal.finished
         }
@@ -100,14 +107,11 @@ abstract class Traversal<T>: Iterable<T> {
  */
 class BreadthFirst<T>(private val nextEdges: (T, BreadthFirst<T>) -> Iterable<T>) : Traversal<T>() {
     private lateinit var todo: ArrayDeque<T>
-    private lateinit var cameFrom: MutableMap<T, T?>
-
 
     override fun init(starts: List<T>) {
         check(starts.isNotEmpty())
 
         todo = ArrayDeque()
-        cameFrom = mutableMapOf()
         cameFrom.putAll(starts.map { Pair(it, null) })
         todo.addAll(starts)
     }
@@ -156,14 +160,12 @@ class BreadthFirst<T>(private val nextEdges: (T, BreadthFirst<T>) -> Iterable<T>
  */
 class ShortestPaths<T>(val nextEdges: (T, ShortestPaths<T>) -> Sequence<Pair<T, Int>>) : Traversal<T>() {
     private lateinit var todo: PriorityQueue<Pair<T, Int>>
-    private lateinit var cameFrom: MutableMap<T, T?>
-    private lateinit var costSoFar:  MutableMap<T, Int>
+    private lateinit var costSoFar: MutableMap<T, Int>
     val distance
         get() = costSoFar[currentNode] ?: 0
 
     override fun init(starts: List<T>) {
         todo = PriorityQueue<Pair<T, Int>> { l, r -> l.second.compareTo(r.second) }
-        cameFrom = mutableMapOf()
         costSoFar = mutableMapOf()
 
         cameFrom.putAll(starts.map { Pair(it, null) })
