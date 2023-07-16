@@ -199,6 +199,7 @@ class ShortestPaths<T>(val nextEdges: (T, ShortestPaths<T>) -> Sequence<Pair<T, 
         check(todo.isNotEmpty())
 
         val (current, cost) = todo.poll()!!
+        currentNode = current
 
         for ((next, nextCost) in nextEdges(current, this)) {
             val newCost = cost + nextCost
@@ -209,7 +210,6 @@ class ShortestPaths<T>(val nextEdges: (T, ShortestPaths<T>) -> Sequence<Pair<T, 
             }
         }
 
-        currentNode = current
         return current
     }
 }

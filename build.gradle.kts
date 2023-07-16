@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.8.21"
+    kotlin("jvm") version "1.9.0"
     application
 }
 
@@ -21,7 +21,6 @@ dependencies {
     implementation("io.kotest:kotest-runner-junit5:5.6.2")
 
     // solutions
-    implementation("org.jgrapht:jgrapht-core:1.5.2")
     implementation("org.jetbrains.kotlinx:multik-core:0.2.2")
     implementation("org.jetbrains.kotlinx:multik-default:0.2.2")
 }

@@ -2,6 +2,7 @@ package at.mpichler.aoc.lib
 
 import mu.KotlinLogging
 import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
 import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 
@@ -116,7 +117,8 @@ abstract class PartSolution {
     private fun test(exampleInput: String): Boolean {
         logger.info { "Start test ..." }
 
-        val startTime = System.currentTimeMillis()
+        val timeSource = TimeSource.Monotonic
+        val start = timeSource.markNow()
 
         val tests = buildList {
             add(Test(exampleInput, getExampleAnswer().toString(), "Example"))
@@ -125,9 +127,9 @@ abstract class PartSolution {
 
         val passedTests = tests.map { executeTest(it) }.count { it }
 
-        val endTime = System.currentTimeMillis()
-        val duration = (endTime - startTime) / 1000.0
-        logger.info { "Testing finished after ${"%.2f".format(duration)}s" }
+        val end = timeSource.markNow()
+        val duration = (end - start)
+        logger.info { "Testing finished after $duration" }
         logger.info { "$passedTests of ${tests.size} passed" }
 
         return passedTests == tests.size
