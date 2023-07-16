@@ -5,13 +5,13 @@ import at.mpichler.aoc.lib.PartSolution
 import at.mpichler.aoc.lib.ShortestPaths
 
 open class Part16A : PartSolution() {
-    protected lateinit var valves: MutableMap<String, Valve>
+    private lateinit var valves: Map<String, Valve>
     protected var maxFlow: Int = 0
     protected lateinit var closedValves: Set<String>
 
 
     override fun parseInput(text: String) {
-        valves = mutableMapOf()
+        val valves = mutableMapOf<String, Valve>()
         val connectionNames = mutableMapOf<String, List<String>>()
         val pattern = Regex("Valve (.*?) has flow rate=(\\d+); tunnels? leads? to valves? (.*)")
         for (line in text.trim().split("\n")) {
@@ -22,7 +22,6 @@ open class Part16A : PartSolution() {
             valves[name] = Valve(name, result.groupValues[2].toInt())
         }
 
-
         for ((name, con) in connectionNames) {
             val connections = mutableListOf<Valve>()
             for (connection in con) {
@@ -30,6 +29,8 @@ open class Part16A : PartSolution() {
             }
             valves[name]?.connections = connections
         }
+
+        this.valves = valves
     }
 
     override fun config() {
@@ -51,12 +52,15 @@ open class Part16A : PartSolution() {
 
     protected fun nextEdges(node: Node): Sequence<Pair<Node, Int>> {
         val (pos, closed, flow) = node
+        val valve = valves[pos]!!
+
         return sequence {
+            val cost = maxFlow - flow
             if (pos in closed) {
-                yield(Pair(Node(pos, closed.minus(pos), flow + valves[pos]!!.flow), maxFlow - flow))
+                yield(Pair(Node(pos, closed.minus(pos), flow + valve.flow), cost))
             }
-            for (valve in valves[pos]!!.connections) {
-                yield(Pair(Node(valve.name, closed, flow), maxFlow - flow))
+            for (v in valve.connections) {
+                yield(Pair(Node(v.name, closed, flow), cost))
             }
         }
     }
@@ -88,7 +92,7 @@ class Part16B : Part16A() {
     private fun nextEdgesB(node: NodeB, traversal: ShortestPaths<NodeB>): Sequence<Pair<NodeB, Int>> {
         val (pos1, pos2, closed, flow) = node
         return sequence {
-            nextEdges(Node(pos1, closed, flow)).forEach { (s1, weight1) -> nextEdges(Node(pos2, closed, flow)).forEach { (s2, weight2) ->
+            nextEdges(Node(pos1, closed, flow)).forEach { (s1, weight1) -> nextEdges(Node(pos2, closed, flow)).forEach { (s2, _) ->
                 if (s1 != s2 || s1.closed == closed) {
                     yield(Pair(NodeB(s1.name, s2.name, s1.closed.intersect(s2.closed), s1.flow + s2.flow - flow), weight1))
                 }
