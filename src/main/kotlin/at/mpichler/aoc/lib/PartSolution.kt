@@ -148,6 +148,9 @@ abstract class PartSolution {
     }
 
     private fun doSolve(puzzle: Puzzle): String {
+        val timeSource = TimeSource.Monotonic
+        val start = timeSource.markNow()
+
         logger.info { "Start solving ..." }
 
         val input = puzzle.getInput()
@@ -160,6 +163,10 @@ abstract class PartSolution {
 
         val (result, elapsed3) = measureTimedValue { compute() }
         logger.info { "Compute $elapsed3" }
+
+        val end = timeSource.markNow()
+        val duration = (end - start)
+        logger.info { "Execution finished after $duration" }
         return result.toString()
     }
 }

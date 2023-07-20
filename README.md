@@ -7,6 +7,9 @@ This repository contains a library to help solve the Advent of Code Challenges
 (https://adventofcode.com) in Kotlin. This library will get the puzzle input and
 example data from the website and also submit the results. 
 
+There are additional helper functions to work with vectors and do traversals through
+graphs. 
+
 At the moment this repository also contains my solutions for the puzzles; I will
 probably move them to a separate repository at some point.
 
@@ -16,9 +19,16 @@ No specific installation is needed, you only need a somewhat recent Java Runtime
 I will not give any specific version constraints, but would recommend at least
 version 1.8.
 
-The library is not yet available on Maven so you need to checkout or download the repository and add the source files to your project manually.
+The library is not yet available on Maven, so you need to check out or download 
+the repository and add the source files to your project manually.
 
-Puzzle inputs are different for each user, so the library needs your session token to get the puzzle inputs for your specific user. You can get the session token from your browser cookies after you are logged in on https://adventofcode.com. Check this [post from Stackexchange](https://superuser.com/a/1114501) for help. Then you need to create a file with path `~/.config/adventofcode/token` containing the session token without whitespace or newlines. On Windows, the path will be `C:\User\<username>\.config\adventofcode\token`.
+Puzzle inputs are different for each user, so the library needs your session 
+token to get the puzzle inputs for your specific user. You can get the session 
+token from your browser cookies after you are logged in on https://adventofcode.com. 
+Check this [post from Stackexchange](https://superuser.com/a/1114501) for help. Then you need to create a 
+file with path `~/.config/adventofcode/token` containing the session token without 
+whitespace or newlines. On Windows, the path will be 
+`C:\User\<username>\.config\adventofcode\token`.
 
 To use the library, implement a class containing the solution for a puzzle and 
 create a `Day` object in the `main` function. This is shown in the following 

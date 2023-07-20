@@ -105,7 +105,7 @@ abstract class Traversal<T> : Iterable<T> {
  * @param T Type of the nodes
  * @property nextEdges Function returning the neighbors of a node in the tree
  */
-class BreadthFirst<T>(private val nextEdges: (T, BreadthFirst<T>) -> Iterable<T>) : Traversal<T>() {
+class BreadthFirst<T>(private val nextEdges: (node: T, traversal: BreadthFirst<T>) -> Iterable<T>) : Traversal<T>() {
     private lateinit var todo: ArrayDeque<T>
 
     override fun init(starts: List<T>) {
@@ -157,8 +157,9 @@ class BreadthFirst<T>(private val nextEdges: (T, BreadthFirst<T>) -> Iterable<T>
 /**
  * Search for the shortest path in a graph. The class uses the Dijkstra algorithm
  * to consider the moving costs for each step.
+ * @property nextEdges function returning the next nodes with their weights
  */
-class ShortestPaths<T>(val nextEdges: (T, ShortestPaths<T>) -> Sequence<Pair<T, Int>>) : Traversal<T>() {
+class ShortestPaths<T>(val nextEdges: (node: T, traversal: ShortestPaths<T>) -> Sequence<Pair<T, Int>>) : Traversal<T>() {
     private lateinit var todo: PriorityQueue<Pair<T, Int>>
     private lateinit var costSoFar: MutableMap<T, Int>
     val distance
@@ -206,6 +207,74 @@ class ShortestPaths<T>(val nextEdges: (T, ShortestPaths<T>) -> Sequence<Pair<T, 
             if (next !in cameFrom || costSoFar[next] == null || newCost < costSoFar[next]!!) {
                 costSoFar[next] = newCost
                 todo.add(Pair(next, newCost))
+                cameFrom[next] = current
+            }
+        }
+
+        return current
+    }
+}
+
+
+/**
+ * Search for the shortest path in a graph. The class uses the Dijkstra algorithm
+ * to consider the moving costs for each step.
+ * @property nextEdges function returning the next nodes with their weights for
+ * a given node
+ * @property heuristic A heuristic function that estimates the cost of the
+ * cheapest path from a given node to the goal and never overestimates the
+ * actual needed costs ("admissible heuristic function").
+ */
+class AStar<T>(val nextEdges: (T, AStar<T>) -> Sequence<Pair<T, Int>>, val heuristic: (node: T) -> Int) : Traversal<T>() {
+    private lateinit var todo: PriorityQueue<Pair<T, Int>>
+    private lateinit var costSoFar: MutableMap<T, Int>
+    val distance
+        get() = costSoFar[currentNode] ?: 0
+
+    override fun init(starts: List<T>) {
+        todo = PriorityQueue<Pair<T, Int>> { l, r -> l.second.compareTo(r.second) }
+        costSoFar = mutableMapOf()
+
+        cameFrom.putAll(starts.map { Pair(it, null) })
+        costSoFar.putAll(starts.map { Pair(it, 0) })
+        todo.addAll(starts.map { Pair(it, 0) })
+    }
+
+    override fun traverse(end: T): Map<T, T?> {
+        while (todo.isNotEmpty()) {
+            val (current, cost) = todo.poll()!!
+
+            if (current == end) {
+                break
+            }
+
+            for ((next, nextCost) in nextEdges(current, this)) {
+                val newCost = cost + nextCost
+                if (next !in cameFrom || costSoFar[next] == null || newCost < costSoFar[next]!!) {
+                    costSoFar[next] = newCost
+                    val priority = newCost + heuristic(next)
+                    todo.add(Pair(next, priority))
+                    cameFrom[next] = current
+                }
+            }
+        }
+
+        currentNode = end
+        return cameFrom
+    }
+
+    override fun advance(): T {
+        check(todo.isNotEmpty())
+
+        val (current, _) = todo.poll()!!
+        currentNode = current
+
+        for ((next, nextCost) in nextEdges(current, this)) {
+            val newCost = costSoFar[current]!! + nextCost
+            if (next !in costSoFar ||  newCost < costSoFar[next]!!) {
+                costSoFar[next] = newCost
+                val priority = newCost + heuristic(next)
+                todo.add(Pair(next, priority))
                 cameFrom[next] = current
             }
         }
