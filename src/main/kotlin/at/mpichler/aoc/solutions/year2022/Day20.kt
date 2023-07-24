@@ -4,8 +4,6 @@ import at.mpichler.aoc.lib.Day
 import at.mpichler.aoc.lib.PartSolution
 import java.util.*
 import kotlin.collections.ArrayDeque
-import kotlin.math.max
-import kotlin.math.min
 
 open class Part20A : PartSolution() {
     lateinit var numbers: ArrayDeque<Pair<Long, Int>>
@@ -54,7 +52,7 @@ open class Part20A : PartSolution() {
         }
     }
 
-    fun rotate(list: MutableList<*>, distance: Long) {
+    private fun rotate(list: MutableList<*>, distance: Long) {
         if (distance == 0L) {
             return
         }
@@ -72,7 +70,7 @@ open class Part20A : PartSolution() {
         } else {
             var todo = distance
             while (todo != 0L) {
-                var current = todo.toInt() or Int.MIN_VALUE
+                val current = todo.toInt() or Int.MIN_VALUE
                 todo -= current
                 Collections.rotate(list, current)
             }

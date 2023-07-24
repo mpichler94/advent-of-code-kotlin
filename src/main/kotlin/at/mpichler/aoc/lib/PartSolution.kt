@@ -28,7 +28,6 @@ data class Test(val input: String, val result: Any, val name: String)
 /**
  * Implements the solution for a part of a puzzle.
  */
-@OptIn(ExperimentalTime::class)
 abstract class PartSolution {
     companion object {
         private const val GREEN = "${27.toChar()}[32m"
@@ -103,7 +102,7 @@ abstract class PartSolution {
     }
 
     private fun testSolve(testInput: String): String {
-        val elapsed1 = measureTime { parseInput(testInput) }
+        val elapsed1 = measureTime { parseInput(testInput.trimEnd()) }
         logger.info { "Parse $elapsed1" }
 
         val elapsed2 = measureTime { config() }
@@ -155,7 +154,7 @@ abstract class PartSolution {
 
         val input = puzzle.getInput()
 
-        val elapsed1 = measureTime { parseInput(input) }
+        val elapsed1 = measureTime { parseInput(input.trimEnd()) }
         logger.info { "Parse $elapsed1" }
 
         val elapsed2 = measureTime { config() }

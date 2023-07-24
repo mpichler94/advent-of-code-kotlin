@@ -99,7 +99,7 @@ open class Part14A : PartSolution() {
 
 class Part14B : Part14A() {
     override fun config() {
-        for (x in 0 until grid.shape[1]) {
+        for (x in 0..<grid.shape[1]) {
             grid[voidY + 1, x] = 1
         }
         voidY = 500

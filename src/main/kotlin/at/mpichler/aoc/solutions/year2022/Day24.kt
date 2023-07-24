@@ -3,7 +3,7 @@ package at.mpichler.aoc.solutions.year2022
 import at.mpichler.aoc.lib.*
 
 open class Part24A : PartSolution() {
-    var width = 0
+    private var width = 0
     var height = 0
     var start = 0
     var goal = 0

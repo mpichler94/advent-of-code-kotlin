@@ -10,6 +10,7 @@ internal class Puzzle(private val year: Int, private val day: Int, private val a
     companion object {
         private const val GREEN = "${27.toChar()}[32m"
         private const val RED = "${27.toChar()}[31m"
+        private const val YELLOW = "${27.toChar()}[33m"
         private const val DEFAULT = "${27.toChar()}[00m"
     }
 
@@ -44,6 +45,9 @@ internal class Puzzle(private val year: Int, private val day: Int, private val a
                 FileAccess.saveAnswer(year, day, part, answer)
             } else if (result == ApiClient.Result.INCORRECT) {
                 FileAccess.saveBadAnswer(year, day, part, answer)
+            } else if (result == ApiClient.Result.ALREADY_ANSWERED) {
+                logger.info { " Answer submitted. $YELLOW No saved answer. $YELLOW" }
+                return
             }
             logger.info { " $GREEN OK $DEFAULT Answer submitted" }
         } else if (FileAccess.getAnswer(year, day, part) == answer) {

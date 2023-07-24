@@ -138,8 +138,6 @@ class BreadthFirst<T>(private val nextEdges: (node: T, traversal: BreadthFirst<T
     }
 
     override fun advance(): T {
-        check(todo.isNotEmpty())
-
         val current = todo.removeFirst()
 
         for (next in nextEdges(current, this)) {
@@ -148,6 +146,8 @@ class BreadthFirst<T>(private val nextEdges: (node: T, traversal: BreadthFirst<T
                 cameFrom[next] = current
             }
         }
+
+        finished = todo.isEmpty()
 
         currentNode = current
         return current
@@ -197,8 +197,6 @@ class ShortestPaths<T>(val nextEdges: (node: T, traversal: ShortestPaths<T>) -> 
     }
 
     override fun advance(): T {
-        check(todo.isNotEmpty())
-
         val (current, cost) = todo.poll()!!
         currentNode = current
 
@@ -210,6 +208,8 @@ class ShortestPaths<T>(val nextEdges: (node: T, traversal: ShortestPaths<T>) -> 
                 cameFrom[next] = current
             }
         }
+
+        finished = todo.isEmpty()
 
         return current
     }
@@ -264,8 +264,6 @@ class AStar<T>(val nextEdges: (T, AStar<T>) -> Sequence<Pair<T, Int>>, val heuri
     }
 
     override fun advance(): T {
-        check(todo.isNotEmpty())
-
         val (current, _) = todo.poll()!!
         currentNode = current
 
@@ -278,6 +276,8 @@ class AStar<T>(val nextEdges: (T, AStar<T>) -> Sequence<Pair<T, Int>>, val heuri
                 cameFrom[next] = current
             }
         }
+
+        finished = todo.isEmpty()
 
         return current
     }

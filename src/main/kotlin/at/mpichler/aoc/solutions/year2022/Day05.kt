@@ -54,7 +54,7 @@ open class Part5A : PartSolution() {
 
     protected data class Command(val count: Int, val src: Int, val dst: Int) {
         fun execute(towers: List<MutableList<Char>>, moveMultipleAtOnce: Boolean = false) {
-            for (i in 0 until count) {
+            for (i in 0..<count) {
                 towers[dst].add(if (moveMultipleAtOnce) i else 0, towers[src].removeFirst())
             }
         }

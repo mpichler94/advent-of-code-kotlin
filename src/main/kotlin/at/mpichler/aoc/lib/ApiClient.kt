@@ -125,7 +125,7 @@ internal class ApiClient(private val session: String, private val year: Int, pri
         if (article.text().contains("That's the right answer")) {
             logger.info { "Answer is correct" }
             return Result.OK
-        } else if (article.text().contains("Did you already complete it")) {
+        } else if (article.text().contains("Did you already complete it") || article.text().contains("finished every puzzle")) {
             logger.info { "Already answered" }
             return Result.ALREADY_ANSWERED
         } else if (article.text().contains("That's not the right answer")) {

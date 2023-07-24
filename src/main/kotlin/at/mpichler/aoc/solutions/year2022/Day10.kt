@@ -242,7 +242,7 @@ class Part10B : Part10A() {
 
         image.add(row.joinToString(""))
         println("Lit pixels:")
-        for (i in 0 until image.size) {
+        for (i in 0..<image.size) {
             println(image[i])
         }
 

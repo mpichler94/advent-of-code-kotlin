@@ -39,7 +39,7 @@ open class Part16A : PartSolution() {
     }
 
     override fun compute(): Int {
-        val traversal = ShortestPaths<Node> {node, _ -> nextEdges(node) }
+        val traversal = ShortestPaths { node, _ -> nextEdges(node) }
         traversal.startFrom(Node("AA", closedValves, 0))
         for ((_, closed, _) in traversal) {
             if (traversal.depth == 30 || closed.isEmpty()) {
@@ -78,7 +78,7 @@ open class Part16A : PartSolution() {
 
 class Part16B : Part16A() {
     override fun compute(): Int {
-        val traversal = ShortestPaths<NodeB>(this::nextEdgesB)
+        val traversal = ShortestPaths(this::nextEdgesB)
         traversal.startFrom(NodeB("AA", "AA", closedValves, 0))
         for ((_, closed, _) in traversal) {
             if (traversal.depth == 26 || closed.isEmpty()) {

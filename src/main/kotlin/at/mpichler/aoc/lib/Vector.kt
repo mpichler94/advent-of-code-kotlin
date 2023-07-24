@@ -1,9 +1,6 @@
 package at.mpichler.aoc.lib
 
-import kotlin.math.absoluteValue
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.sqrt
+import kotlin.math.*
 
 abstract class VectorI(val data: List<Int>) {
     fun norm(ord: Order): Int {
@@ -30,6 +27,9 @@ data class Vector2i(val x: Int, val y: Int) : VectorI(listOf(x, y)) {
 
     fun neighbors(moves: Iterable<Vector2i>): List<Vector2i> {
         return moves.map { it + this }
+    }
+    fun sign(): Vector2i {
+        return Vector2i(x.sign, y.sign)
     }
 }
 

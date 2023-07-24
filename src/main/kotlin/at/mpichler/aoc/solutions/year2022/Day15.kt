@@ -101,7 +101,7 @@ class Part15B : Part15A() {
             val topY = sensor.pos.y + sensor.distance - 1
             val bottomY = sensor.pos.y - sensor.distance - 1
 
-            for (i in 0 until sensor.distance) {
+            for (i in 0..<sensor.distance) {
                 for ((x, y) in listOf(
                     Vector2i(sensor.pos.x + i, topY - i),
                     Vector2i(sensor.pos.x - i, topY - i),

@@ -44,7 +44,7 @@ open class Part18A : PartSolution() {
     private fun <T> List<T>.combinations(): Sequence<Pair<T, T>> {
         return sequence {
             for (l in indices) {
-                for (r in l + 1 until size) {
+                for (r in l + 1..<size) {
                     yield(Pair(get(l), get(r)))
                 }
             }

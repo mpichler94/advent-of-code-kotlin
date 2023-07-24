@@ -77,7 +77,7 @@ open class Part17A : PartSolution() {
 
     private fun checkCollision(rock: List<List<Int>>, rockPos: Vector2i): Boolean {
         for (x in rock.indices) {
-            for (y in 0 until rock[0].size) {
+            for (y in 0..<rock[0].size) {
                 if (rock[x][y] == 0) {
                     continue
                 }

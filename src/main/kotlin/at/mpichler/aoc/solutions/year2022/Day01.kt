@@ -9,7 +9,7 @@ open class Part1A : PartSolution() {
     override fun parseInput(text: String) {
         sums = text.trim()
             .split("\n\n")
-            .map { it.split("\n").sumOf { it.toInt() } }
+            .map { it.split("\n").sumOf(String::toInt) }
     }
 
     override fun getExampleAnswer(): Int {

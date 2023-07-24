@@ -21,8 +21,8 @@ open class Part8A : PartSolution() {
     override fun compute(): Int {
         var visible = 0
 
-        for (y in 0 until wood.getHeight()) {
-            for (x in 0 until wood.getWidth()) {
+        for (y in 0..<wood.getHeight()) {
+            for (x in 0..<wood.getWidth()) {
                 visible += if (wood.isVisible(x, y)) 1 else 0
             }
         }
@@ -44,11 +44,11 @@ open class Part8A : PartSolution() {
         }
 
         private fun getRow(y: Int, start: Int = 0, end: Int = getWidth()): MultiArray<Int, D1> {
-            return trees[y, start until end]
+            return trees[y, start..<end]
         }
 
         private fun getCol(x: Int, start: Int = 0, end: Int = getHeight()): MultiArray<Int, D1> {
-            return trees[start until end, x]
+            return trees[start..<end, x]
 
         }
 
@@ -78,7 +78,7 @@ open class Part8A : PartSolution() {
         fun getDistance(x: Int, y: Int): Iterable<Int> {
             val distance = mutableListOf(getWidth() - x - 1, x, getHeight() - y - 1, y)
             val tree = trees[y][x]
-            for (i in x + 1 until getWidth()) {
+            for (i in x + 1..<getWidth()) {
                 if (trees[y][i] >= tree) {
                     distance[0] = i - x
                     break
@@ -90,7 +90,7 @@ open class Part8A : PartSolution() {
                     break
                 }
             }
-            for (i in y + 1 until getHeight()) {
+            for (i in y + 1..<getHeight()) {
                 if (trees[i][x] >= tree) {
                     distance[2] = i - y
                     break
@@ -110,8 +110,8 @@ open class Part8A : PartSolution() {
 class Part8B : Part8A() {
     override fun compute(): Int {
         var scenicScore = 0
-        for (y in 1 until wood.getHeight() - 1) {
-            for (x in 1 until wood.getWidth() - 1) {
+        for (y in 1..<wood.getHeight() - 1) {
+            for (x in 1..<wood.getWidth() - 1) {
                 val distance = wood.getDistance(x, y)
                 val score = distance.fold(1, Int::times)
                 scenicScore = max(scenicScore, score)

@@ -41,7 +41,7 @@ open class Part9A : PartSolution() {
     private fun move(direction: Direction, pos: MutableList<Vector2i>) {
         pos[0] = moveHead(direction, pos[0])
 
-        for (i in 1 until pos.size) {
+        for (i in 1..<pos.size) {
             pos[i] = moveTail(pos[i - 1], pos[i])
         }
     }
@@ -86,7 +86,7 @@ open class Part9A : PartSolution() {
     private data class Command(val direction: Direction, val count: Int)
 
     private fun Direction(value: String): Direction {
-        return Direction.values().first { it.value == value.first() }
+        return Direction.entries.first { it.value == value.first() }
     }
 
     private enum class Direction(val value: Char, val dir: Vector2i) {

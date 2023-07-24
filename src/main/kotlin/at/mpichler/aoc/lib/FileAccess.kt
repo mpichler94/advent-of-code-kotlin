@@ -1,7 +1,6 @@
 package at.mpichler.aoc.lib
 
 import java.io.File
-import kotlin.io.path.Path
 
 /**
  * Handles access to the cached files and session token.
