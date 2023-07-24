@@ -3,7 +3,7 @@ package at.mpichler.aoc.solutions.year2021
 import at.mpichler.aoc.lib.Day
 import at.mpichler.aoc.lib.PartSolution
 
-class PartA : PartSolution() {
+open class Part1A : PartSolution() {
 
     lateinit var numbers: List<Int>
 
@@ -11,12 +11,12 @@ class PartA : PartSolution() {
         numbers = text.trim().split("\n").map { it.toInt() }.toList()
     }
 
-    override fun getExampleAnswer(): String {
-        return "7"
+    override fun getExampleAnswer(): Int {
+        return 7
     }
 
-    override fun compute(): String {
-        return countIncreases().toString()
+    override fun compute(): Int {
+        return countIncreases()
     }
 
     private fun countIncreases(): Int {
@@ -24,6 +24,16 @@ class PartA : PartSolution() {
     }
 }
 
+class Part1B : Part1A() {
+    override fun config() {
+        numbers = numbers.windowed(3).map { it.sum() }
+    }
+
+    override fun getExampleAnswer(): Int {
+        return 5
+    }
+}
+
 fun main() {
-    Day(2021, 1, PartA())
+    Day(2021, 1, Part1A(), Part1B())
 }
