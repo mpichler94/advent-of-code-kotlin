@@ -24,7 +24,7 @@ open class Part9A : PartSolution() {
         for (x in 0..<heights.shape[1]) {
             for (y in 0..<heights.shape[0]) {
                 val pos = Vector2i(x, y)
-                val neighborHeights = heights.neighbors(pos).map { heights[it] }
+                val neighborHeights = heights.neighborPositions(pos).map { heights[it] }
                 if (neighborHeights.all { heights[pos] < it }) {
                     lowPoints.add(pos)
                 }
@@ -55,7 +55,7 @@ class Part9B : Part9A() {
     }
 
     private fun nextEdges(pos: Vector2i, traversal: BreadthFirst<Vector2i>): Iterable<Vector2i> {
-        return heights.neighbors(pos)
+        return heights.neighborPositions(pos)
             .filter { heights[it] < 9 }
             .filter { heights[pos] < heights[it] }
             .toList()

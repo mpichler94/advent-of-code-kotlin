@@ -13,7 +13,7 @@ operator fun D2Array<Int>.set(pos: Vector2i, value: Int) {
     this[pos.y, pos.x] = value
 }
 
-fun D2Array<Int>.neighbors(
+fun <T>D2Array<T>.neighborPositions(
     pos: Vector2i,
     distance: Int = 1,
     diagonals: Boolean = false,
@@ -54,4 +54,13 @@ fun D2Array<Int>.neighbors(
             }
         }
     }
+}
+
+fun <T>D2Array<T>.neighbors(
+    pos: Vector2i,
+    distance: Int = 1,
+    diagonals: Boolean = false,
+    zeroMove: Boolean = false
+): Sequence<T> {
+    return neighborPositions(pos, distance, diagonals, zeroMove).map { get(it.y, it.x) }
 }

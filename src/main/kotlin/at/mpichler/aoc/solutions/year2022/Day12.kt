@@ -34,7 +34,7 @@ open class Part12A : PartSolution() {
     }
 
     private fun nextEdges(pos: Vector2i, traversal: BreadthFirst<*>): List<Vector2i> {
-        return grid.neighbors(pos).filter { height(grid[it]) <= height(grid[pos]) + 1 }.toList()
+        return grid.neighborPositions(pos).filter { height(grid[it]) <= height(grid[pos]) + 1 }.toList()
     }
 
     private fun height(code: Int): Int {

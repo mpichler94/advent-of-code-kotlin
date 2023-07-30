@@ -19,17 +19,33 @@ abstract class VectorI(val data: List<Int>) {
 
 data class Vector2i(val x: Int, val y: Int) : VectorI(listOf(x, y)) {
     constructor() : this(0, 0)
+
     operator fun plus(other: Vector2i) = Vector2i(x + other.x, y + other.y)
     operator fun minus(other: Vector2i) = Vector2i(x - other.x, y - other.y)
     operator fun plus(value: Int) = Vector2i(x + value, y + value)
+    operator fun minus(value: Int) = Vector2i(x - value, y - value)
 
     operator fun times(factor: Int) = Vector2i(x * factor, y * factor)
 
     fun neighbors(moves: Iterable<Vector2i>): List<Vector2i> {
         return moves.map { it + this }
     }
+
     fun sign(): Vector2i {
         return Vector2i(x.sign, y.sign)
+    }
+
+    fun withX(newX: Int): Vector2i {
+        return Vector2i(newX, y)
+    }
+
+    fun withY(newY: Int): Vector2i {
+        return Vector2i(x, newY)
+    }
+
+    fun neighbors(moves: Iterable<Vector2i>, limits: Pair<Vector2i, Vector2i>): Iterable<Vector2i> {
+        return moves.map { it + this }
+            .filter { it.x >= limits.first.x && it.x <= limits.second.x && it.y >= limits.first.y && it.y <= limits.second.y }
     }
 }
 

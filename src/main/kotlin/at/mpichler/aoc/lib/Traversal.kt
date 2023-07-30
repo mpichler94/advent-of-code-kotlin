@@ -249,7 +249,7 @@ class AStar<T>(val nextEdges: (T, AStar<T>) -> Sequence<Pair<T, Int>>, val heuri
             }
 
             for ((next, nextCost) in nextEdges(current, this)) {
-                val newCost = cost + nextCost
+                val newCost = costSoFar[current]!! + nextCost
                 if (next !in cameFrom || costSoFar[next] == null || newCost < costSoFar[next]!!) {
                     costSoFar[next] = newCost
                     val priority = newCost + heuristic(next)
