@@ -3,10 +3,9 @@ package at.mpichler.aoc.solutions.year2021
 import at.mpichler.aoc.lib.Day
 import at.mpichler.aoc.lib.PartSolution
 import at.mpichler.aoc.lib.Vector2i
-import org.jetbrains.kotlinx.multik.api.d2array
+import at.mpichler.aoc.lib.product
 import org.jetbrains.kotlinx.multik.api.d2arrayIndices
 import org.jetbrains.kotlinx.multik.api.mk
-import org.jetbrains.kotlinx.multik.api.zeros
 import org.jetbrains.kotlinx.multik.ndarray.data.D2Array
 import org.jetbrains.kotlinx.multik.ndarray.data.get
 import org.jetbrains.kotlinx.multik.ndarray.data.set
@@ -21,16 +20,6 @@ open class Part11A : PartSolution() {
     override fun parseInput(text: String) {
         val lines = text.split("\n")
         energyLevels = mk.d2arrayIndices(10, 10) { x, y -> lines[y][x].digitToInt() }
-    }
-
-    private fun product(list: Iterable<Int>): Iterable<Pair<Int, Int>> {
-        return buildList {
-            for (first in list) {
-                for (second in list) {
-                    add(Pair(first, second))
-                }
-            }
-        }
     }
 
     override fun compute(): Int {

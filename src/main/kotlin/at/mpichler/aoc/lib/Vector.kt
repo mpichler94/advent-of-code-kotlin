@@ -50,6 +50,7 @@ data class Vector2i(val x: Int, val y: Int) : VectorI(listOf(x, y)) {
 }
 
 data class Vector3i(val x: Int, val y: Int, val z: Int) : VectorI(listOf(x, y, z)) {
+    constructor() : this(0, 0, 0)
     operator fun plus(other: Vector3i) = Vector3i(x + other.x, y + other.y, z + other.z)
     operator fun minus(other: Vector3i) = Vector3i(x - other.x, y - other.y, z - other.z)
     operator fun plus(other: Int) = Vector3i(x + other, y + other, z + other)
