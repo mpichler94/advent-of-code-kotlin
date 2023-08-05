@@ -6,8 +6,16 @@ abstract class VectorI(val data: List<Int>) {
     fun norm(ord: Order): Int {
         return when (ord) {
             Order.L1 -> data.sumOf { it.absoluteValue }
-            Order.L2 -> sqrt(data.sumOf { it * it }.toDouble()).toInt()
+            Order.L2 -> sqrt(data.sumOf { it * it }.toDouble()).roundToInt()
             Order.Linf -> data.maxOf { it.absoluteValue }
+        }
+    }
+
+    fun dnorm(ord: Order): Double {
+        return when (ord) {
+            Order.L1 -> data.sumOf { it.absoluteValue }.toDouble()
+            Order.L2 -> sqrt(data.sumOf { it * it }.toDouble())
+            Order.Linf -> data.maxOf { it.absoluteValue }.toDouble()
         }
     }
 

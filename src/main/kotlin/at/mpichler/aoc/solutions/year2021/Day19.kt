@@ -3,11 +3,11 @@ package at.mpichler.aoc.solutions.year2021
 import at.mpichler.aoc.lib.*
 
 open class Part19A : PartSolution() {
-    private lateinit var scanners: MutableList<List<Vector3i>>
+    private lateinit var scanners: List<Scanner>
     lateinit var positions: MutableList<Vector3i>
 
     override fun parseInput(text: String) {
-        val scanners = mutableListOf<List<Vector3i>>()
+        val scanners = mutableListOf<Scanner>()
         var scanner = mutableListOf<Vector3i>()
 
         for (line in text.split("\n")) {
@@ -16,7 +16,7 @@ open class Part19A : PartSolution() {
             }
             if (line.startsWith("--- scanner")) {
                 if (scanner.isNotEmpty()) {
-                    scanners.add(scanner)
+                    scanners.add(Scanner(scanner))
                 }
                 scanner = mutableListOf()
             } else {
@@ -25,86 +25,32 @@ open class Part19A : PartSolution() {
             }
         }
         if (scanner.isNotEmpty()) {
-            scanners.add(scanner)
+            scanners.add(Scanner(scanner))
         }
 
         this.scanners = scanners
     }
 
     override fun compute(): Int {
-        var scanner0 = scanners.removeFirst()
-        var i = 0
-        var count = 0
+        val matched = mutableListOf(0)
         positions = MutableList(scanners.size) { Vector3i() }
-        while (scanners.isNotEmpty()) {
-            val (matched, pos) = matchScanner(scanner0, scanners[i])
-            if (matched != null) {
-                scanner0 = (scanner0 + matched).toSet().toList()
-                positions[count] = pos!!
-                count += 1
-                scanners.removeAt(i)
-                if (scanners.isEmpty()) {
-                    break
-                }
-                i %= scanners.size
-            } else {
+
+        var i = 1
+        val scanner0 = scanners.first()
+        while (matched.size < scanners.size) {
+            if (i in matched) {
                 i = (i + 1) % scanners.size
+                continue
             }
-        }
-        return scanner0.size
-    }
-
-    private fun matchScanner(scanner0: List<Vector3i>, scanner: List<Vector3i>): Pair<List<Vector3i>?, Vector3i?> {
-        val indices = product(scanner0.indices, scanner.indices)
-
-        for (r in 0..23) {
-            var rotated = rotate(scanner.toList(), r)
-            val onlyRotated = rotated.toList()
-            for (i in indices) {
-                val delta = scanner0[i.first] - rotated[i.second]
-                rotated = rotated.map { it + delta }
-                if (countOverlaps(scanner0, rotated) > 11) {
-                    return rotated to (scanner0[i.first] - onlyRotated[i.second])
-                }
+            if (scanner0.isOverlapping(scanners[i])) {
+                val pos = scanner0.integrateFrom(scanners[i])
+                positions.add(pos)
+                matched.add(i)
             }
+
+            i = (i + 1) % scanners.size
         }
-
-        return null to null
-    }
-
-    private fun rotate(scanner: List<Vector3i>, rotation: Int): List<Vector3i> {
-        return when (rotation) {
-            0 -> scanner
-            1 -> scanner.map { Vector3i(it.x, -it.z, it.y) }
-            2 -> scanner.map { Vector3i(it.x, -it.y, -it.z) }
-            3 -> scanner.map { Vector3i(it.x, it.z, -it.y) }
-            4 -> scanner.map { Vector3i(-it.x, -it.y, it.z) }
-            5 -> scanner.map { Vector3i(-it.x, -it.z, -it.y) }
-            6 -> scanner.map { Vector3i(-it.x, it.y, -it.z) }
-            7 -> scanner.map { Vector3i(-it.x, it.z, it.y) }
-            8 -> scanner.map { Vector3i(-it.y, it.z, -it.x) }
-            9 -> scanner.map { Vector3i(it.y, it.x, -it.z) }
-            10 -> scanner.map { Vector3i(it.y, it.z, it.x) }
-            11 -> scanner.map { Vector3i(-it.y, it.x, it.z) }
-            12 -> scanner.map { Vector3i(it.y, -it.z, -it.x) }
-            13 -> scanner.map { Vector3i(it.y, -it.x, it.z) }
-            14 -> scanner.map { Vector3i(-it.y, -it.z, it.x) }
-            15 -> scanner.map { Vector3i(-it.y, -it.x, -it.z) }
-            16 -> scanner.map { Vector3i(-it.z, -it.x, it.y) }
-            17 -> scanner.map { Vector3i(it.z, -it.y, it.x) }
-            18 -> scanner.map { Vector3i(it.z, it.x, it.y) }
-            19 -> scanner.map { Vector3i(-it.z, it.y, it.x) }
-            20 -> scanner.map { Vector3i(it.z, it.y, -it.x) }
-            21 -> scanner.map { Vector3i(-it.z, it.x, -it.y) }
-            22 -> scanner.map { Vector3i(-it.z, -it.y, -it.x) }
-            23 -> scanner.map { Vector3i(it.z, -it.x, -it.y) }
-
-            else -> error("Invalid rotation")
-        }
-    }
-
-    private fun countOverlaps(scanner0: List<Vector3i>, scanner: List<Vector3i>): Int {
-        return scanner0.count { it in scanner }
+        return scanner0.numBeacons
     }
 
     override fun getExampleAnswer(): Int {
@@ -252,6 +198,70 @@ open class Part19A : PartSolution() {
         """.trimIndent()
     }
 
+    data class Scanner(val initialBeacons: List<Vector3i>) {
+        private var beacons = initialBeacons.toList()
+        val numBeacons get() = beacons.size
+        private val interBeaconDistances: List<List<Int>>
+            get() {
+                return beacons.map { outer -> beacons.filter { it != outer }.map { (it - outer).norm(Order.L1) } }
+            }
+
+        fun isOverlapping(other: Scanner): Boolean {
+            return interBeaconDistances.count { beacon ->
+                other.interBeaconDistances.any { otherBeacon -> beacon.count { it in otherBeacon } >= 11 } } >= 12
+        }
+
+        private fun rotatedBeacons(rotation: Int): List<Vector3i> {
+            return when (rotation) {
+                0 -> beacons
+                1 -> beacons.map { Vector3i(it.x, -it.z, it.y) }
+                2 -> beacons.map { Vector3i(it.x, -it.y, -it.z) }
+                3 -> beacons.map { Vector3i(it.x, it.z, -it.y) }
+                4 -> beacons.map { Vector3i(-it.x, -it.y, it.z) }
+                5 -> beacons.map { Vector3i(-it.x, -it.z, -it.y) }
+                6 -> beacons.map { Vector3i(-it.x, it.y, -it.z) }
+                7 -> beacons.map { Vector3i(-it.x, it.z, it.y) }
+                8 -> beacons.map { Vector3i(-it.y, it.z, -it.x) }
+                9 -> beacons.map { Vector3i(it.y, it.x, -it.z) }
+                10 -> beacons.map { Vector3i(it.y, it.z, it.x) }
+                11 -> beacons.map { Vector3i(-it.y, it.x, it.z) }
+                12 -> beacons.map { Vector3i(it.y, -it.z, -it.x) }
+                13 -> beacons.map { Vector3i(it.y, -it.x, it.z) }
+                14 -> beacons.map { Vector3i(-it.y, -it.z, it.x) }
+                15 -> beacons.map { Vector3i(-it.y, -it.x, -it.z) }
+                16 -> beacons.map { Vector3i(-it.z, -it.x, it.y) }
+                17 -> beacons.map { Vector3i(it.z, -it.y, it.x) }
+                18 -> beacons.map { Vector3i(it.z, it.x, it.y) }
+                19 -> beacons.map { Vector3i(-it.z, it.y, it.x) }
+                20 -> beacons.map { Vector3i(it.z, it.y, -it.x) }
+                21 -> beacons.map { Vector3i(-it.z, it.x, -it.y) }
+                22 -> beacons.map { Vector3i(-it.z, -it.y, -it.x) }
+                23 -> beacons.map { Vector3i(it.z, -it.x, -it.y) }
+
+                else -> error("Invalid rotation")
+            }
+        }
+
+        // 9 - 0 | 4 - 1 | 12 - 2 | 0 - 3 | 14 - 5 | 1 - 8 | 7 - 10
+        private fun isMatching(otherBeacons: List<Vector3i>): Vector3i? {
+            // distance of all 12 overlapping beacons must be same between scanners
+            return beacons.flatMap { outer -> otherBeacons.map { it - outer } }.groupingBy { it }.eachCount()
+                .filter { it.value >= 12 }.keys.firstOrNull()
+        }
+
+        fun integrateFrom(other: Scanner): Vector3i {
+            for (r in 0..23) {
+                val otherBeacons = other.rotatedBeacons(r)
+                val distance = isMatching(otherBeacons)
+                if (distance != null) {
+                    beacons = (beacons + otherBeacons.map { it - distance }).toSet().toList()
+                    return distance
+                }
+            }
+
+            error("Cannot align scanners")
+        }
+    }
 }
 
 class Part19B : Part19A() {
