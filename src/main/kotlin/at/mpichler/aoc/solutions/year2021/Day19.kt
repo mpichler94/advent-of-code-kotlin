@@ -242,10 +242,8 @@ open class Part19A : PartSolution() {
             }
         }
 
-        // 9 - 0 | 4 - 1 | 12 - 2 | 0 - 3 | 14 - 5 | 1 - 8 | 7 - 10
         private fun isMatching(otherBeacons: List<Vector3i>): Vector3i? {
-            // distance of all 12 overlapping beacons must be same between scanners
-            return beacons.flatMap { outer -> otherBeacons.map { it - outer } }.groupingBy { it }.eachCount()
+            return beacons.flatMap { beacon -> otherBeacons.map { it - beacon } }.groupingBy { it }.eachCount()
                 .filter { it.value >= 12 }.keys.firstOrNull()
         }
 
@@ -267,16 +265,7 @@ open class Part19A : PartSolution() {
 class Part19B : Part19A() {
     override fun compute(): Int {
         super.compute()
-
-        var maxDist = 0
-        for (i in positions.indices.toList().combinations()) {
-            val dist = (positions[i.first] - positions[i.second]).norm(Order.L1)
-            if (dist > maxDist) {
-                maxDist = dist
-            }
-        }
-
-        return maxDist
+        return positions.combinations().maxOf { (it.first - it.second).norm(Order.L1) }
     }
 
     override fun getExampleAnswer(): Int {
