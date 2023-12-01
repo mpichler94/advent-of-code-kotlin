@@ -1,6 +1,8 @@
 plugins {
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "1.9.20"
     application
+
+    //id("io.gitlab.arturborsch.detekt") version "1.23.0"
 }
 
 group = "at.pichler"
