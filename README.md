@@ -1,7 +1,9 @@
 # advent-of-code-kotlin
 
 ![GitHub](https://img.shields.io/github/license/mpichler94/advent-of-code-kotlin)
+![Static Badge](https://img.shields.io/badge/Kotlin-1.9.20-blue)
 ![womm](https://cdn.rawgit.com/nikku/works-on-my-machine/v0.2.0/badge.svg)
+![GitHub last commit (by committer)](https://img.shields.io/github/last-commit/mpichler94/advent-of-code-kotlin)
 
 This repository contains a library to help solve the Advent of Code Challenges
 (https://adventofcode.com) in Kotlin. This library will get the puzzle input and
