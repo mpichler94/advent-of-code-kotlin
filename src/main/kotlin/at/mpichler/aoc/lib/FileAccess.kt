@@ -77,6 +77,6 @@ internal object FileAccess {
         val partName = if (part == Part.A) "a" else "b"
         val file = File("$CONFIG_DIR/${getFilePrefix(year, day)}${partName}_bad_answers.txt")
         file.parentFile.mkdirs()
-        file.appendText(answer)
+        file.appendText(answer + "\n")
     }
 }

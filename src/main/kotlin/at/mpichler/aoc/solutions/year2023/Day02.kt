@@ -10,38 +10,28 @@ open class Part2A : PartSolution() {
         games = text.trim().split("\n").map { Game(it) }
     }
 
-    override fun getExampleAnswer(): Int {
-        return 8
-    }
-
+    override fun getExampleAnswer() = 8
 
     override fun compute(): Int {
         return games.filter { it.valid }.sumOf { it.id }
     }
 
     internal data class Game(val id: Int, val rounds: List<Round>) {
-        val valid: Boolean get() = rounds.all { it.valid }
+        val valid get() = rounds.all { it.valid }
 
-        val minRed: Int get() = rounds.maxOf { it.red }
-        val minGreen: Int get() = rounds.maxOf { it.green }
-        val minBlue: Int get() = rounds.maxOf { it.blue }
+        private val minRed get() = rounds.maxOf { it.red }
+        private val minGreen get() = rounds.maxOf { it.green }
+        private val minBlue get() = rounds.maxOf { it.blue }
 
-        val power: Int get() = minRed * minGreen * minBlue
+        val power get() = minRed * minGreen * minBlue
     }
 
     internal data class Round(val red: Int, val green: Int, val blue: Int) {
         val sum get() = red + green + blue
-
-        val valid: Boolean
-            get() {
-                if (sum > 39 || red > 12 || green > 13 || blue > 14) {
-                    return false
-                }
-                return true
-            }
+        val valid = !(sum > 39 || red > 12 || green > 13 || blue > 14)
     }
 
-    internal fun Game(text: String): Game {
+    private fun Game(text: String): Game {
         val match = "Game (\\d+): (.*)".toRegex().find(text)
         match as MatchResult
         val id = match.groupValues[1].toInt()
@@ -54,12 +44,10 @@ open class Part2A : PartSolution() {
             var blue = 0
             val cubes = round.split(", ")
             for (cube in cubes) {
-                if (cube.endsWith("red")) {
-                    red += cube.replace(" red", "").toInt()
-                } else if (cube.endsWith("green")) {
-                    green += cube.replace(" green", "").toInt()
-                } else if (cube.endsWith("blue")) {
-                    blue += cube.replace(" blue", "").toInt()
+                when {
+                    cube.endsWith("red") -> red += cube.replace(" red", "").toInt()
+                    cube.endsWith("green") -> green += cube.replace(" green", "").toInt()
+                    cube.endsWith("blue") -> blue += cube.replace(" blue", "").toInt()
                 }
             }
             rounds.add(Round(red, green, blue))
@@ -70,9 +58,7 @@ open class Part2A : PartSolution() {
 }
 
 class Part2B : Part2A() {
-    override fun getExampleAnswer(): Int {
-        return 2286
-    }
+    override fun getExampleAnswer() = 2286
 
     override fun compute(): Int {
         return games.sumOf { it.power }

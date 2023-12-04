@@ -10,9 +10,7 @@ open class Part1A : PartSolution() {
         texts = text.trim().split("\n")
     }
 
-    override fun getExampleAnswer(): Int {
-        return 142
-    }
+    override fun getExampleAnswer() = 142
 
     internal fun getNumber(nums: String) = ("" + nums.first() + nums.last()).toInt()
 
@@ -34,21 +32,17 @@ class Part1B : Part1A() {
         "nine" to "9"
     )
 
-    override fun getExampleInput(): String {
-        return """
-            two1nine
-            eightwothree
-            abcone2threexyz
-            xtwone3four
-            4nineeightseven2
-            zoneight234
-            7pqrstsixteen
-        """.trimIndent()
-    }
+    override fun getExampleInput() = """
+        two1nine
+        eightwothree
+        abcone2threexyz
+        xtwone3four
+        4nineeightseven2
+        zoneight234
+        7pqrstsixteen
+    """.trimIndent()
 
-    override fun getExampleAnswer(): Int {
-        return 281
-    }
+    override fun getExampleAnswer() = 281
 
     override fun compute(): Int {
         var sum = 0

@@ -8,7 +8,6 @@ plugins {
 group = "at.pichler"
 version = "1.0-SNAPSHOT"
 
-
 repositories {
     mavenCentral()
 }
