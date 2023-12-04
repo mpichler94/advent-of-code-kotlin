@@ -35,17 +35,7 @@ open class Part3A : PartSolution() {
     override fun getExampleAnswer() = 4361
 
     override fun compute(): Int {
-        var sum = 0
-        for (num in numbers) {
-            for (symbol in symbols) {
-                if (num.isAdjacent(symbol)) {
-                    sum += num.value
-                    break
-                }
-            }
-        }
-
-        return sum
+        return numbers.filter { num -> symbols.any { num.isAdjacent(it) } }.sumOf { it.value }
     }
 
     internal data class Symbol(val value: Char, val x: Int, val y: Int)
@@ -68,24 +58,14 @@ class Part3B : Part3A() {
     override fun getExampleAnswer() = 467835
 
     override fun compute(): Int {
-        var sum = 0
-        for (symbol in symbols.filter { it.value == '*' }) {
-            var ratio = 1
-            var count = 0
-            for (num in numbers) {
-                if (num.isAdjacent(symbol)) {
-                    ratio *= num.value
-                    count++
-                }
-                if (count > 2) {
-                    break
-                }
+        return symbols.filter { it.value == '*' }.map {
+            val products = numbers.filter { num -> num.isAdjacent(it) }.map { it.value }
+            return@map if (products.size == 2) {
+                products.fold(1) { acc, i -> acc * i }
+            } else {
+                0
             }
-            if (count == 2) {
-                sum += ratio
-            }
-        }
-        return sum
+        }.sum()
     }
 }
 
