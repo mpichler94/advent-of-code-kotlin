@@ -1,7 +1,5 @@
 package at.mpichler.aoc.lib
 
-import mu.KotlinLogging
-
 /**
  * Implements the main entry point for the solution of a Day. The provided
  * solution(s) will be executed directly when the [Day] is created.
@@ -24,11 +22,8 @@ class Day(
     private val day: Int,
     private val partA: PartSolution,
     private val partB: PartSolution? = null,
-    private val autoSubmit: Boolean = true
+    private val autoSubmit: Boolean = true,
 ) {
-
-    private val logger = KotlinLogging.logger {}
-
     init {
         run()
     }
@@ -36,15 +31,16 @@ class Day(
     private fun run() {
         val puzzle = Puzzle(year, day, autoSubmit)
 
-        logger.info { "========== Part A ==========" }
+        println("")
+        println("================== Part A ==================")
         partA.run(puzzle, Part.A)
 
         if (partB == null) {
             return
         }
 
-        logger.info { "" }
-        logger.info { "========== Part B ==========" }
+        println("")
+        println("================== Part B ==================")
         partB.run(puzzle, Part.B)
     }
 }

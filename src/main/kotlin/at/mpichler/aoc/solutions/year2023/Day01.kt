@@ -14,25 +14,25 @@ open class Part1A : PartSolution() {
 
     internal fun getNumber(nums: String) = ("" + nums.first() + nums.last()).toInt()
 
-    override fun compute(): Int {
-        return texts.sumOf { it.filter(Char::isDigit).let(this::getNumber) }
-    }
+    override fun compute(): Int = texts.sumOf { it.filter(Char::isDigit).let(this::getNumber) }
 }
 
 class Part1B : Part1A() {
-    private val digits = mapOf(
-        "one" to "1",
-        "two" to "2",
-        "three" to "3",
-        "four" to "4",
-        "five" to "5",
-        "six" to "6",
-        "seven" to "7",
-        "eight" to "8",
-        "nine" to "9"
-    )
+    private val digits =
+        mapOf(
+            "one" to "1",
+            "two" to "2",
+            "three" to "3",
+            "four" to "4",
+            "five" to "5",
+            "six" to "6",
+            "seven" to "7",
+            "eight" to "8",
+            "nine" to "9",
+        )
 
-    override fun getExampleInput() = """
+    override fun getExampleInput() =
+        """
         two1nine
         eightwothree
         abcone2threexyz
@@ -40,7 +40,7 @@ class Part1B : Part1A() {
         4nineeightseven2
         zoneight234
         7pqrstsixteen
-    """.trimIndent()
+        """.trimIndent()
 
     override fun getExampleAnswer() = 281
 

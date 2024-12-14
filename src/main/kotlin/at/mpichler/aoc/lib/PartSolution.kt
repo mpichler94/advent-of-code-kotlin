@@ -1,7 +1,5 @@
 package at.mpichler.aoc.lib
 
-import mu.KotlinLogging
-import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
@@ -9,12 +7,14 @@ import kotlin.time.measureTimedValue
 /**
  * Specifies the individual parts of a Puzzle.
  */
-enum class Part(val value: Int) {
+enum class Part(
+    val value: Int,
+) {
     /** The first part of the puzzle. */
     A(1),
 
     /** The second part of the puzzle. */
-    B(2)
+    B(2),
 }
 
 /**
@@ -23,7 +23,11 @@ enum class Part(val value: Int) {
  * @property result The expected result for the input.
  * @property name Custom name shown in logs
  */
-data class Test(val input: String, val result: Any, val name: String)
+data class Test(
+    val input: String,
+    val result: Any,
+    val name: String,
+)
 
 /**
  * Implements the solution for a part of a puzzle.
@@ -32,10 +36,12 @@ abstract class PartSolution {
     companion object {
         private const val GREEN = "${27.toChar()}[32m"
         private const val RED = "${27.toChar()}[31m"
+        private const val YELLOW = "${27.toChar()}[33m"
+        private const val BLUE = "${27.toChar()}[34m"
+        private const val BG_GREEN = "${27.toChar()}[42m"
+        private const val BG_RED = "${27.toChar()}[41m"
         private const val DEFAULT = "${27.toChar()}[00m"
     }
-
-    private val logger = KotlinLogging.logger {}
 
     /**
      * Parse the input for the puzzle. This input may be the example input or the
@@ -46,7 +52,7 @@ abstract class PartSolution {
     /**
      * Here you can do any configuration before the [compute] function is called.
      */
-    open fun config() { /* May be overridden to do configuration before compute */
+    open fun config() { // May be overridden to do configuration before compute
     }
 
     /**
@@ -59,9 +65,7 @@ abstract class PartSolution {
      * Return custom tests that are executed additionally to the example to test
      * your implementation before it is executed with the actual puzzle input.
      */
-    open fun tests(): Sequence<Test> {
-        return sequenceOf()
-    }
+    open fun tests(): Sequence<Test> = sequenceOf()
 
     /**
      * Return the example input for the puzzle. The example is used to test your
@@ -72,9 +76,7 @@ abstract class PartSolution {
      * you can override this method to supply custom example input.
      *
      */
-    open fun getExampleInput(): String? {
-        return null
-    }
+    open fun getExampleInput(): String? = null
 
     /**
      * Return the expected result for the example input.
@@ -103,33 +105,34 @@ abstract class PartSolution {
 
     private fun testSolve(testInput: String): String {
         val elapsed1 = measureTime { parseInput(testInput.trimEnd()) }
-        logger.info { "Parse $elapsed1" }
+        println("Parse $YELLOW$elapsed1$DEFAULT")
 
         val elapsed2 = measureTime { config() }
-        logger.info { "Config $elapsed2" }
+        println("Config $YELLOW$elapsed2$DEFAULT")
 
         val (result, elapsed3) = measureTimedValue { compute() }
-        logger.info { "Compute $elapsed3" }
+        println("Compute $YELLOW$elapsed3$DEFAULT")
         return result.toString()
     }
 
     private fun test(exampleInput: String): Boolean {
-        logger.info { "Start test ..." }
+        println("Start test ...")
 
         val timeSource = TimeSource.Monotonic
         val start = timeSource.markNow()
 
-        val tests = buildList {
-            add(Test(exampleInput, getExampleAnswer().toString(), "Example"))
-            addAll(tests())
-        }
+        val tests =
+            buildList {
+                add(Test(exampleInput, getExampleAnswer().toString(), "Example"))
+                addAll(tests())
+            }
 
         val passedTests = tests.map { executeTest(it) }.count { it }
 
         val end = timeSource.markNow()
         val duration = (end - start)
-        logger.info { "Testing finished after $duration" }
-        logger.info { "$passedTests of ${tests.size} passed" }
+        println("Testing finished after $YELLOW$duration$DEFAULT")
+        println("$passedTests of ${tests.size} passed")
 
         return passedTests == tests.size
     }
@@ -137,11 +140,11 @@ abstract class PartSolution {
     private fun executeTest(test: Test): Boolean {
         val result = testSolve(test.input)
         return if (result == test.result.toString()) {
-            logger.info { "Test ${test.name} $GREEN OK $DEFAULT Result: $result" }
+            println("Test ${test.name} $GREEN OK $DEFAULT Result: $BLUE$result$DEFAULT")
             true
         } else {
-            logger.error { "Test ${test.name} $RED Failed $DEFAULT" }
-            logger.error { "  !!  Expected ${test.result} but got $result" }
+            println("ERROR: Test ${test.name} $RED Failed $DEFAULT")
+            println("  !!  Expected $BG_GREEN${test.result}$DEFAULT but got $BG_RED$result$DEFAULT")
             false
         }
     }
@@ -150,22 +153,22 @@ abstract class PartSolution {
         val timeSource = TimeSource.Monotonic
         val start = timeSource.markNow()
 
-        logger.info { "Start solving ..." }
+        println("Start solving ...")
 
         val input = puzzle.getInput()
 
         val elapsed1 = measureTime { parseInput(input.trimEnd()) }
-        logger.info { "Parse $elapsed1" }
+        println("Parse $YELLOW$elapsed1$DEFAULT")
 
         val elapsed2 = measureTime { config() }
-        logger.info { "Config $elapsed2" }
+        println("Config $YELLOW$elapsed2$DEFAULT")
 
         val (result, elapsed3) = measureTimedValue { compute() }
-        logger.info { "Compute $elapsed3" }
+        println("Compute $YELLOW$elapsed3$DEFAULT")
 
         val end = timeSource.markNow()
         val duration = (end - start)
-        logger.info { "Execution finished after $duration" }
+        println("Execution finished after $YELLOW$duration$DEFAULT")
         return result.toString()
     }
 }

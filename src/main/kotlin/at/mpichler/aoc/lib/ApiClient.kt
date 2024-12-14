@@ -1,6 +1,5 @@
 package at.mpichler.aoc.lib
 
-import mu.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.IOException
@@ -21,24 +20,36 @@ import java.time.Duration
  * @property year The year for the puzzle
  * @property day The day for the puzzle
  */
-internal class ApiClient(private val session: String, private val year: Int, private val day: Int) {
+internal class ApiClient(
+    private val session: String,
+    private val year: Int,
+    private val day: Int,
+) {
+    companion object {
+        private const val GREEN = "${27.toChar()}[32m"
+        private const val RED = "${27.toChar()}[31m"
+        private const val YELLOW = "${27.toChar()}[33m"
+        private const val BLUE = "${27.toChar()}[34m"
+        private const val DEFAULT = "${27.toChar()}[00m"
+        private const val BG_GREEN = "${27.toChar()}[42m"
+    }
 
-    private val logger = KotlinLogging.logger {}
-
-    private val client: HttpClient = HttpClient.newBuilder()
+    private val client: HttpClient = HttpClient
+        .newBuilder()
         .version(HttpClient.Version.HTTP_2)
         .followRedirects(HttpClient.Redirect.NORMAL)
         .connectTimeout(Duration.ofSeconds(30))
         .build()
 
     init {
-        logger.info { "Initialize API client for $year day $day with token $session" }
+        println("Initialize API client for $year day $day with token $session")
     }
 
     private fun getPuzzlePage(): Document {
-        logger.info { "Getting puzzle page for $year day $day" }
+        println("Getting puzzle page for $year day $day")
 
-        val request = HttpRequest.newBuilder()
+        val request = HttpRequest
+            .newBuilder()
             .uri(URI.create("https://adventofcode.com/$year/day/$day"))
             .timeout(Duration.ofMinutes(1))
             .header("Cookie", "session=$session")
@@ -47,7 +58,7 @@ internal class ApiClient(private val session: String, private val year: Int, pri
 
         val data = client.send(request, BodyHandlers.ofString())
         if (data.statusCode() < 200 || data.statusCode() >= 300) {
-            logger.error { "Request for input failed with code ${data.statusCode()}: ${data.headers()}" }
+            println("ERROR: Request for input failed with code ${data.statusCode()}: ${data.headers()}")
             throw IOException("Cannot get puzzle page")
         }
 
@@ -76,9 +87,10 @@ internal class ApiClient(private val session: String, private val year: Int, pri
     }
 
     fun getInput(): String {
-        logger.info { "Getting input for $year day $day" }
+        println("Getting input for $year day $day")
 
-        val request = HttpRequest.newBuilder()
+        val request = HttpRequest
+            .newBuilder()
             .uri(URI.create("https://adventofcode.com/$year/day/$day/input"))
             .timeout(Duration.ofMinutes(1))
             .header("Cookie", "session=$session")
@@ -87,7 +99,7 @@ internal class ApiClient(private val session: String, private val year: Int, pri
 
         val data = client.send(request, BodyHandlers.ofString())
         if (data.statusCode() < 200 || data.statusCode() >= 300) {
-            logger.error { "Request for input failed with code ${data.statusCode()}: ${data.headers()}" }
+            println("ERROR: Request for input failed with code ${data.statusCode()}: ${data.headers()}")
             return ""
         }
 
@@ -99,12 +111,13 @@ internal class ApiClient(private val session: String, private val year: Int, pri
     }
 
     fun submit(answer: String, part: Part): Result {
-        logger.info { "Submitting answer ''$answer'' for $year day $day" }
+        println("Submitting answer $BLUE'$answer'$DEFAULT for $year day $day")
 
         val partNum = if (part == Part.A) 1 else 2
         val body = "answer=" + URLEncoder.encode(answer, StandardCharsets.UTF_8) + "&level=$partNum"
 
-        val request = HttpRequest.newBuilder()
+        val request = HttpRequest
+            .newBuilder()
             .uri(URI.create("https://adventofcode.com/$year/day/$day/answer"))
             .timeout(Duration.ofMinutes(1))
             .header("Content-Type", "application/x-www-form-urlencoded")
@@ -115,7 +128,7 @@ internal class ApiClient(private val session: String, private val year: Int, pri
 
         val data = client.send(request, BodyHandlers.ofString())
         if (data.statusCode() < 200 || data.statusCode() >= 300) {
-            logger.error { "Request for answer failed with code ${data.statusCode()}: ${data.headers()}" }
+            println("${RED}RROR$DEFAULT: Request for answer failed with code ${data.statusCode()}: ${data.headers()}")
             return Result.IO_ERROR
         }
 
@@ -123,18 +136,21 @@ internal class ApiClient(private val session: String, private val year: Int, pri
         val article = document.selectFirst("article") ?: return Result.IO_ERROR
 
         if (article.text().contains("That's the right answer")) {
-            logger.info { "Answer is correct" }
+            println("${BG_GREEN}Answer is correct$DEFAULT")
             return Result.OK
-        } else if (article.text().contains("Did you already complete it") || article.text().contains("finished every puzzle")) {
-            logger.info { "Already answered" }
+        } else if (article.text().contains("Did you already complete it") ||
+            article.text().contains("finished every puzzle")
+        ) {
+            println("${RED}ERROR$DEFAULT: Already answered")
             return Result.ALREADY_ANSWERED
         } else if (article.text().contains("That's not the right answer")) {
-            logger.error { "Answer is incorrect" }
+            println("${RED}ERROR$DEFAULT: Answer is incorrect:")
+            println("    ${article.text()}")
             return Result.INCORRECT
         } else if (article.text().contains("You gave an answer too recently")) {
             val waitTime = Regex("You have (?:(\\d+)m )?(\\d+)s left to wait").find(article.text())
             if (waitTime != null && waitTime.groups.isNotEmpty()) {
-                logger.error { "You gave an answer too recently. $waitTime" }
+                println("${RED}ERROR$DEFAULT: You gave an answer too recently. $waitTime")
                 return Result.WAIT
             }
         }
@@ -147,6 +163,6 @@ internal class ApiClient(private val session: String, private val year: Int, pri
         ALREADY_ANSWERED,
         INCORRECT,
         WAIT,
-        IO_ERROR
+        IO_ERROR,
     }
 }

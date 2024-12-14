@@ -1,0 +1,30 @@
+root = true
+
+[*]
+end_of_line = lf
+charset = utf-8
+indent_size = 4
+indent_style = space
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{kt,kts}]
+ij_kotlin_name_count_to_use_star_import = 9999999
+ij_kotlin_name_count_to_use_star_import_for_members = 9999999
+ktlint_standard_multiline-expression-wrapping = disabled
+ktlint_standard_string-template-indent = disabled
+max_line_length = 120
+ktlint_function_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than = 5
+
+[*.{yml,yaml,toml}]
+indent_size = 2
+
+[*.properties]
+charset = latin1
+trim_trailing_whitespace = false
+
+[*.{conf,bat}]
+end_of_line = crlf
+
+[*.md]
+trim_trailing_whitespace = false
