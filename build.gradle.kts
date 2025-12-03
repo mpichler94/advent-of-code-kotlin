@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.1.0"
+    kotlin("jvm") version "2.2.21"
     application
 
     // id("io.gitlab.arturborsch.detekt") version "1.23.0"
@@ -14,12 +14,12 @@ repositories {
 
 dependencies {
     // lib
-    implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.12")
-    implementation("org.jsoup:jsoup:1.18.3")
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.21")
+    implementation("org.jsoup:jsoup:1.21.2")
 
     testImplementation(kotlin("test"))
-    implementation("io.kotest:kotest-runner-junit5:5.9.1")
+    implementation("io.kotest:kotest-runner-junit5:6.0.7")
 
     // solutions
     implementation("org.jetbrains.kotlinx:multik-core:0.2.3")
@@ -35,5 +35,5 @@ kotlin {
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("at.mpichler.aoc.solutions.year2021.Day01Kt")
 }
