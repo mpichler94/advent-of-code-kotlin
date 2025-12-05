@@ -2,7 +2,6 @@ package at.mpichler.aoc.solutions.year2025
 
 import at.mpichler.aoc.lib.Day
 import at.mpichler.aoc.lib.PartSolution
-import io.kotest.matchers.string.shouldBeUUID
 
 open class Part2A : PartSolution() {
     lateinit var ranges: List<LongRange>
